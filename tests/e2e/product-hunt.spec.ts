@@ -1,6 +1,20 @@
 import { test, expect } from "../fixtures/test.fixture";
 import { TEST_DATA } from "../config/test-data";
 
+test.beforeEach(async ({ page }) => {
+  await page.goto("/", { waitUntil: "commit" });
+
+  const title = await page.title();
+  if (title.includes("Just a moment") || title.includes("Attention Required")) {
+    await page.waitForFunction(
+      () => !(window as any).document.title.includes("Just a moment"),
+      { timeout: 15000 }
+    ).catch(() => {});
+  }
+
+  await page.waitForLoadState("domcontentloaded");
+});
+
 test.describe("Product Hunt Web E2E Suite", () => {
   test("1. Homepage should load and display principal search element", async ({ page, homePage }) => {
     await expect(page).toHaveTitle(/Product Hunt/i);
