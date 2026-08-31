@@ -1,6 +1,6 @@
 # Overview
 
-This repository contains the end-to-end quality strategy, exploratory testing analysis, and automated test suites for Product Hunt's web application and public GraphQL API.
+This repository contains the end-to-end quality strategy, exploratory testing analysis, and automated test suites for Product Hunt's web application and public GraphQL API. 
 
 ---
 
@@ -8,7 +8,6 @@ This repository contains the end-to-end quality strategy, exploratory testing an
 
 ## Prerequisites
 
-- Node.js **v18+** (or v20+)
 - Bun **v1.0+**
 - Git
 
@@ -21,95 +20,6 @@ This repository contains the end-to-end quality strategy, exploratory testing an
 ```bash
 git clone https://github.com/vc1608/spare-assessment.git
 cd spare-qa
-```
-
----
-
-# Install Node.js
-
-Node.js is required to run JavaScript/TypeScript applications and Playwright.
-
-### Windows / macOS / Linux
-
-Download Node.js from the official website:
-
-https://nodejs.org/
-
-It is recommended to install the **LTS version**.
-
-After installation, verify:
-
-```bash
-node --version
-npm --version
-```
-
-Expected output:
-
-```text
-vXX.XX.X
-X.XX.X
-```
-
-> **Note:** Restart your terminal after installation if `node` or `npm` is not recognized.
-
----
-
-## Install Playwright
-
-Install Playwright Test:
-
-```bash
-npm init playwright@latest
-```
-
-During setup, you may be prompted to select:
-
-* JavaScript or TypeScript
-* Test directory
-* GitHub Actions
-* Install Playwright browsers
-
-For a TypeScript project, select **TypeScript**.
-
-## Install Playwright browsers
-
-If browsers were not installed during setup:
-
-```bash
-npx playwright install
-```
-
-For Linux dependencies as well:
-
-```bash
-npx playwright install --with-deps
-```
-
-## Verify Playwright installation
-
-Check the installed version:
-
-```bash
-npx playwright --version
-```
-
-Run the sample tests:
-
-```bash
-npx playwright test
-```
-
-Run tests with the HTML report:
-
-```bash
-npx playwright test --reporter=html
-```
-
-Open the report:
-
-```bash
-npx playwright show-report
 ```
 
 ---
@@ -150,11 +60,63 @@ bun --version
 
 ---
 
+## Playwright Setup
+
+Install Playwright dependencies through Bun:
+
+```bash
+bun install
+```
+
+Install the Chromium browser and required Linux dependencies:
+
+```bash
+bunx playwright install --with-deps chromium
+```
+
+For local development, browsers can also be installed with:
+
+```bash
+bunx playwright install
+```
+
+Check the installed version:
+
+```bash
+bunx playwright --version
+```
+
+Run the sample tests:
+
+```bash
+bunx playwright test
+```
+
+Run tests with the HTML report:
+
+```bash
+bunx playwright test --reporter=html
+```
+
+Open the report:
+
+```bash
+bunx playwright show-report
+```
+
+---
+
 # Running the Test Suites
 
 ## 1. GraphQL API Tests (Bun)
 
-Runs all API integration tests.
+Run all API integration tests.
+
+```bash
+bun test tests/api
+```
+
+Run the API test file directly.
 
 ```bash
 bun test tests/api/product-hunt-api.spec.ts
@@ -173,50 +135,94 @@ bun test tests/api/product-hunt-api.spec.ts -t "Introspection"
 Run all E2E tests (Headless by default)
 
 ```bash
-npx playwright test tests/e2e/product-hunt.spec.ts
+bunx playwright test tests/e2e/product-hunt.spec.ts
 ```
 
 Run in Headed mode (Visible browser window)
 
 ```bash
-npx playwright test tests/e2e/product-hunt.spec.ts --headed
+bunx playwright test tests/e2e/product-hunt.spec.ts --headed
 ```
 
 Run in Interactive UI Mode (Step-by-step inspector & debugger)
 
 ```bash
-npx playwright test --ui
+bunx playwright test --ui
 ```
 
 Run a single test file (or specific path)
 
 ```bash
-npx playwright test tests/e2e/product-hunt.spec.ts
+bunx playwright test tests/e2e/product-hunt.spec.ts
 ```
 
 Run a single specific test by name title
 
 ```bash
-npx playwright test -g "Homepage should load"
+bunx playwright test -g "Homepage should load"
 ```
 
 Run tests sequentially (Single worker / Non-parallel)
 
 ```bash
-npx playwright test tests/e2e/product-hunt.spec.ts --workers=1
+bunx playwright test tests/e2e/product-hunt.spec.ts --workers=1
 ```
 
 Run tests in parallel with explicit worker count (e.g., 4 threads)
 
 ```bash
-npx playwright test tests/e2e/product-hunt.spec.ts --workers=4
+bunx playwright test tests/e2e/product-hunt.spec.ts --workers=4
 ```
 
 Run on a specific browser engine (e.g., Firefox or WebKit)
 
 ```bash
-npx playwright test tests/e2e/product-hunt.spec.ts --project=chromium
+bunx playwright test tests/e2e/product-hunt.spec.ts --project=chromium
 ```
+
+---
+
+# CI/CD Setup
+
+The project uses GitHub Actions to automatically run the API and E2E test suites on every push and pull request.
+
+The Product Hunt API token is stored securely as a GitHub Actions repository secret and is injected into the test environment at runtime.
+
+The token is never committed to the repository.
+
+## Product Hunt API Token Setup
+
+### 1. Sign in to Product Hunt
+
+1. Log in to your profile on Product Hunt.
+2. Click your profile icon and select the API Dashboard.
+3. Click the Add an Application (or Create Application) button.
+4. Provide an app name and a redirect URI (you can use a placeholder like http://localhost if you don't have one).
+5. Click Create Application.
+6. Scroll down to the bottom of your new application page and click "Create Token to generate a non-expiring developer access token". Copy this token immediately.
+
+> Never commit the API token to the repository or add it directly to any TypeScript, JSON, YAML, or configuration file.
+
+### 2. Add the Token to GitHub Actions
+
+Open the GitHub repository and navigate to:
+
+```text
+GitHub Repository → Settings → Secrets and variables → Actions → Repository secrets
+```
+
+1. Select "New repository secret"
+
+2. Paste your Product Hunt API token into the Secret field.
+```text
+Name:
+PRODUCT_HUNT_TOKEN
+
+Secret:
+<your Product Hunt API token>
+```
+
+3. Then click "Add secret"
 
 ---
 

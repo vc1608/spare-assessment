@@ -52,10 +52,10 @@ jobs:
         run: bun install
 
       - name: Install Playwright Browsers with Dependencies
-        run: npx playwright install --with-deps chromium
+        run: bunx playwright install --with-deps chromium
 
       - name: Execute Playwright E2E Tests
-        run: npx playwright test tests/e2e/product-hunt.spec.ts
+        run: bunx playwright test tests/e2e/product-hunt.spec.ts
 
       - name: Upload Playwright Test Artifacts
         if: always()
