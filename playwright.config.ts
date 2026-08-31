@@ -2,25 +2,25 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests/e2e",
-  timeout: 20000,
+  timeout: 30000,
   expect: {
     timeout: 10000,
   },
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: 1,
+  workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
     baseURL: "https://www.producthunt.com",
     trace: "on-first-retry",
+    // Standard User-Agent to bypass Cloudflare headless checks
     userAgent:
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
     extraHTTPHeaders: {
       "Accept-Language": "en-US,en;q=0.9",
     },
     viewport: { width: 1280, height: 720 },
-    ignoreHTTPSErrors: true,
   },
   projects: [
     {
@@ -28,11 +28,8 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         launchOptions: {
-          args: [
-            "--disable-blink-features=AutomationControlled",
-            "--disable-features=IsolateOrigins,site-per-process",
-            "--no-sandbox",
-          ],
+          // Bypasses the window.navigator.webdriver automation flag
+          args: ["--disable-blink-features=AutomationControlled"],
         },
       },
     },
