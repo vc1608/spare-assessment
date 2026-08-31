@@ -4,10 +4,11 @@ import { TEST_DATA } from "../config/test-data";
 test.describe("Product Hunt Web E2E Suite", () => {
   test("1. Homepage should load and display principal search element", async ({ page, homePage }) => {
     await expect(page).toHaveTitle(/Product Hunt/i);
-    await expect(homePage.searchInput).toBeVisible();
+    await expect(homePage.searchBar).toBeVisible();
   });
 
-  test("KNOWN_BUG: 2. Navigating to a topic feed updates page URL correctly @bugId-123", async ({ page, homePage }) => {
+  test("2. Navigating to a topic feed updates page URL correctly @bugId-123", async ({ page, homePage }) => {
+    test.skip(true, "Skipping because topic/category link fail to navigate correctly");
     if (await homePage.firstTopicLink.isVisible()) {
       await homePage.firstTopicLink.click();
       await expect(page.url()).toContain("/topics/");

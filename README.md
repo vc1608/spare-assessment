@@ -19,7 +19,7 @@ This repository contains the end-to-end quality strategy, exploratory testing an
 ### Clone the repository
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/vc1608/spare-assessment.git
 cd spare-qa
 ```
 
